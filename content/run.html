@@ -2,7 +2,7 @@
         <head>
         <title>wcm2022</title>
         <meta charset="utf-8">
-<meta property="head" content="H2">
+<meta property="head" content="H1">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700,900" rel="stylesheet">
         <link rel="stylesheet" href="./../cmsimde/static/chimper/fonts/icomoon/style.css">
@@ -139,18 +139,206 @@ img.add_border {
           </div>
           
         </header>
-    <div id="tipue_search_content">About << <a href='About.html'>Previous</a> <a href='Rust_src.html'>Next</a> >> Rust_src<br /><h1>Rust</h1>
-<p></p>
-<p><span>1.</span><a href="https://www.rust-lang.org/zh-TW/tools/install">安裝</a></p>
-<p></p>
-<p>2.<a href="https://rust-lang.tw/book-tw/title-page.html">中文入門</a></p>
-<p></p>
-<p>3.<a href="https://www.bilibili.com/video/BV1hp4y1k7SV?p=1">教學影片</a></p>
-<p></p>
-<p></p>
-<p></p>
-<p></p>
-<br />About << <a href='About.html'>Previous</a> <a href='Rust_src.html'>Next</a> >> Rust_src</div>
+    <div id="tipue_search_content">progress rate << <a href='progress rate.html'>Previous</a> <a href='runsrc.html'>Next</a> >> runsrc<br /><h1>run</h1>
+<script src="./../cmsimde/static/brython.js"></script>
+<script src="./../cmsimde/static/brython_stdlib.js"></script>
+<!-- for ggame -->
+<p>
+<script src="./../cmsimde/static/jquery-3.3.1.min.js"></script>
+<script src="./../cmsimde/static/jquery-ui.1.12.1.min.js"></script>
+<script src="./../cmsimde/static/pixi-3.0.5.min.js"></script>
+<script src="./../cmsimde/static/buzz-1.2.1.js"></script>
+<script src="./../cmsimde/static/bs.js"></script>
+<script src="./../downloads/brython_modules.js"></script>
+</p>
+<!-- Cango 程式庫 -->
+<p>
+<script src="./../cmsimde/static/Cango-24v03-min.js"></script>
+<script src="./../cmsimde/static/CangoAxes-6v01-min.js"></script>
+<script src="./../cmsimde/static/gearUtils-09.js"></script>
+<script src="./../cmsimde/static/SVGpathUtils-6v03-min.js"></script>
+</p>
+<!-- for Konva 程式庫 -->
+<p>
+<script src="./../cmsimde/static/konva.min.js"></script>
+<script>
+window.onload=function(){
+brython({debug:1, pythonpath:['./../cmsimde/static/','./../downloads/py/']});
+}
+</script>
+</p>
+<p><!-- 導入 FileSaver 與 filereader --></p>
+<p>
+<script src="./../cmsimde/static/ace/FileSaver.min.js" type="text/javascript"></script>
+<script src="./../cmsimde/static/ace/filereader.js" type="text/javascript"></script>
+</p>
+<p><!-- 導入 ace --></p>
+<p>
+<script src="./../cmsimde/static/ace/ace.js" type="text/javascript"></script>
+<script src="./../cmsimde/static/ace/ext-language_tools.js" type="text/javascript"></script>
+<script src="./../cmsimde/static/ace/mode-python3.js" type="text/javascript"></script>
+<script src="./../cmsimde/static/ace/snippets/python.js" type="text/javascript"></script>
+</p>
+<p><!-- 請注意, 這裡使用 Javascript 將 localStorage["py_src"] 中存在近端瀏覽器的程式碼, 由使用者決定存檔名稱--></p>
+<p>
+<script type="text/javascript">
+function doSave(storage_id, filename){
+    var blob = new Blob([localStorage[storage_id]], {type: "text/plain;charset=utf-8"});
+    filename = document.getElementById(filename).value
+    saveAs(blob, filename+".py");
+}
+</script>
+</p>
+<p><!-- 印出版次與關鍵字程式 --></p>
+<p>
+<script type="text/python3">
+from browser import document as doc
+from browser import html
+import ace
+# 清除畫布
+def clear_bd(ev):
+    bd = doc["brython_div"]
+    bd.clear()
+# Brython 3.3.4 內建的 container 名稱為  'container' 且 turtle 輸出為 svg 必須使用 div 訂定 id
+Ace = ace.Editor(editor_id="kw_editor", console_id="kw_console", container_id="kw__container", storage_id="kw_py_src" )
+Ace.editor.setValue("""# 導入 sys 模組
+import sys
+# 導入 keyword 模組
+import keyword
+def helloWorld():
+    print("Hello World!")
+helloWorld()
+# 利用 sys 模組中的 version_info 印出 Python 版次
+print("Python version: ", sys.version_info)
+# 利用 keyword 模組中的 kwlist 印出關鍵字
+print("Python keywords: ", keyword.kwlist)
+""")
+Ace.editor.scrollToRow(0)
+Ace.editor.gotoLine(0)
+# 執行程式, 顯示輸出結果與清除輸出結果及對應按鈕綁定
+doc['kw_run'].bind('click', Ace.run)
+doc['kw_show_console'].bind('click', Ace.show_console)
+doc['kw_clear_console'].bind('click', Ace.clear_console)
+doc['clear_bd'].bind('click', clear_bd)
+</script>
+</p>
+<p><!-- 用來顯示程式碼的 editor 區域 --></p>
+<div id="kw_editor" style="width: 600px; height: 300px;"></div>
+<p><!-- 以下的表單與按鈕與前面的 Javascript doSave 函式以及 FileSaver.min.js 互相配合 --></p>
+<form><label>Filename: <input id="kw_filename" placeholder="input file name" type="text"/>.py</label> <input onclick="doSave('kw_py_src', 'kw_filename');" type="submit" value="Save"/></form>
+<p><button id="kw_run">Run</button> <button id="kw_show_console">Output</button> <button id="kw_clear_console">清除輸出區</button><button id="clear_bd">清除繪圖區</button><button onclick="window.location.reload()">Reload</button></p>
+<div style="width: 100%; height: 100%;"><textarea autocomplete="off" id="kw_console"></textarea></div>
+<div id="brython_div"></div>
+<div class="col-md-0" height="1" id="graphics-column" width="1"></div>
+<p><!-- ****************************** keyword start -->
+<script type="text/python3">
+from browser import document as doc
+# 導入位於 static 目錄下的 beditor.py 
+import beditor
+# 利用 beditor.py 中的 editor 類別建立案例, 對應到 kw1
+kw1 = beditor.editor("""# 導入 sys 模組
+import sys
+# 導入 keyword 模組
+import keyword
+# 利用 sys 模組中的 version_info 印出 Python 版次
+print("Python version: ", sys.version_info)
+# 利用 keyword 模組中的 kwlist 印出關鍵字
+print("Python keywords: ", keyword.kwlist)
+""", "kw_editor", "kw_console", "kw__container", "kw_py_src")
+# id 為 "keyword" 的按鈕點按時, 執行 kw1 物件中的 prog 方法
+doc["keyword"].bind('click', kw1.prog)
+</script>
+</p>
+<script type="text/python3">
+import beditor
+from browser import document
+url = "https://gist.githubusercontent.com/41023146/5d5b274e44ba3400046ad7d104a4c511/raw/a47a4054d2176c2d5b9ec617c078b804d2e89ea2/hw%25201-1"
+src = open(url).read()
+hw1_1 = beditor.editor(src, "kw_editor", "kw_console", "kw__container", "kw_py_src")
+document["hw1_1"].bind("click", hw1_1.prog)
+</script>
+<script type="text/python3">
+import beditor
+from browser import document
+url = "https://gist.githubusercontent.com/41023146/748bad2208b682b9670350a061ee10e9/raw/f31c6bb040e3775b1107a6cc68c7dc08c3073e6b/hw%25201-2"
+src = open(url).read()
+hw1_2 = beditor.editor(src, "kw_editor", "kw_console", "kw__container", "kw_py_src")
+document["hw1_2"].bind("click", hw1_2.prog)
+</script>
+<script type="text/python3">
+import beditor
+from browser import document
+url = "https://gist.githubusercontent.com/41023146/4eccbd34047b3c1a45534746edb56844/raw/a463241ee38da4de2e387ddc5c4837e9aad647e9/gistfile1.txt"
+src = open(url).read()
+貪食蛇 = beditor.editor(src, "kw_editor", "kw_console", "kw__container", "kw_py_src")
+document["貪食蛇"].bind("click", 貪食蛇.prog)
+</script>
+<script type="text/python3">
+import beditor
+from browser import document
+url = "https://gist.githubusercontent.com/41023146/8fc4aea4b6bef6ac45d86914851660ca/raw/bea14c49d7dee0f2e283e37190745e0446eb959f/w14"
+src = open(url).read()
+ai_snake = beditor.editor(src, "kw_editor", "kw_console", "kw__container", "kw_py_src")
+document["ai_snake"].bind("click", ai_snake.prog)
+</script>
+<script type="text/python3">
+import beditor
+from browser import document
+url = "https://gist.githubusercontent.com/41023146/7430e7cd08724dbd831408fb8ead0f8d/raw/e06d0bedd22d0b5c74cfe8fc04d02f9fbd468ad5/a%25E5%258A%25A0%25E5%2588%25B0b"
+src = open(url).read()
+a_to_b = beditor.editor(src, "kw_editor", "kw_console", "kw__container", "kw_py_src")
+document["a_to_b"].bind("click", a_to_b.prog)
+</script>
+<script type="text/python3">
+import beditor
+from browser import document
+url = "https://gist.githubusercontent.com/41023146/8d18ed1cdd15e4668b7c6c60e73f67bf/raw/b7a10cf0dc9f31d3058c023e833c378012bfe1c1/w13"
+src = open(url).read()
+w13 = beditor.editor(src, "kw_editor", "kw_console", "kw__container", "kw_py_src")
+document["w13"].bind("click", w13.prog)
+</script>
+<script type="text/python3">
+import beditor
+from browser import document
+url = "https://gist.githubusercontent.com/41023146/1ebbd8e6257dfb60182d29e6a9aaff00/raw/463bbe624e68ddb62b6b26a50253afd8def6e8a6/w13-2"
+src = open(url).read()
+w13_2 = beditor.editor(src, "kw_editor", "kw_console", "kw__container", "kw_py_src")
+document["w13_2"].bind("click", w13_2.prog)
+</script>
+<script type="text/python3">
+import beditor
+from browser import document
+url = "https://gist.githubusercontent.com/41023146/4e438641ea1dd0b2bd3ed476df6f020d/raw/09bc6cb4433ab6eb737e4d388ee289f478448312/w13"
+src = open(url).read()
+w13_3 = beditor.editor(src, "kw_editor", "kw_console", "kw__container", "kw_py_src")
+document["w13_3"].bind("click", w13_3.prog)
+</script>
+<script type="text/python3">
+import beditor
+from browser import document
+url = "https://gist.githubusercontent.com/41023146/d4f132d12c1e443f7ac47d8ef1d60a5a/raw/b4557beb918661a3084fcf9cf001f021f6df15ec/w13-4"
+src = open(url).read()
+w13_4 = beditor.editor(src, "kw_editor", "kw_console", "kw__container", "kw_py_src")
+document["w13_4"].bind("click", w13_4.prog)
+</script>
+<script type="text/python3">
+import beditor
+from browser import document
+url = "https://gist.githubusercontent.com/41023146/e3e9cfdea42eb4cffd968ffe410153fd/raw/33b0593ac0b11f45cdb72a4c459cdfbf4995d3c9/Python"
+src = open(url).read()
+w14 = beditor.editor(src, "kw_editor", "kw_console", "kw__container", "kw_py_src")
+document["w14"].bind("click", w14.prog)
+</script>
+<script type="text/python3">
+import beditor
+from browser import document
+url = "https://gist.githubusercontent.com/41023146/5fdbfdecc23d31559952df0e905c4392/raw/7ee9de5468d26f8e77c944c0db83d5e971123cd8/Python"
+src = open(url).read()
+w14_1 = beditor.editor(src, "kw_editor", "kw_console", "kw__container", "kw_py_src")
+document["w14_1"].bind("click", w14_1.prog)
+</script>
+<p><button id="keyword">Keyword</button><button id="hw1_1">hw1_1</button><button id="hw1_2">hw1_2</button><button id="貪食蛇">snake</button><button id="ai_snake">ai_snake</button><button id="a_to_b">a_to_b</button><button id="w13">w13</button><button id="w13_2">畫表格</button><button id="w13_3">隨機生成方格</button><button id="w13_4">隨機生成方格plus</button><button id="w14">簡易計算機</button><button id="w14_1">猜數字遊戲</button></p>
+<br />progress rate << <a href='progress rate.html'>Previous</a> <a href='runsrc.html'>Next</a> >> runsrc</div>
         
     <!-- footer -->
       <div class="container">
