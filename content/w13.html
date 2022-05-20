@@ -2,6 +2,7 @@
         <head>
         <title>wcm2022</title>
         <meta charset="utf-8">
+<meta property="head" content="H2">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700,900" rel="stylesheet">
         <link rel="stylesheet" href="./../cmsimde/static/chimper/fonts/icomoon/style.css">
@@ -138,18 +139,245 @@ img.add_border {
           </div>
           
         </header>
-    <div id="tipue_search_content"> <a href='Rust.html'>Next</a> >> Rust<br /><h1>About</h1>
-<p>此內容管理系統以 <a href="https://github.com/mdecourse/cmsimde">https://github.com/mdecourse/cmsimde</a> 作為 submodule 運作, 可以選定對應的版本運作, cmsimde 可以持續改版, 不會影響之前設為 submodule, 使用舊版 cmsimde 模組的內容管理相關運作.</p>
-<h4>利用 cmsimde 建立靜態網誌方法:</h4>
-<p>1. 在 github 建立倉儲, git clone 到近端</p>
-<p>2. 參考 <a href="https://github.com/mdecourse/newcms">https://github.com/mdecourse/newcms</a>, 加入除了 cmsimde 目錄外的所有內容</p>
-<p>以 git submodule add <a href="https://github.com/mdecourse/cmsimde">https://github.com/mdecourse/cmsimde</a> cmsimde</p>
-<p>建立 cmsimde 目錄, 並從 github 取下子模組內容.</p>
-<p>3.在近端維護時, 更換目錄到倉儲中的 cmsimde, 以 python wsgi.py 啟動近端網際伺服器.</p>
-<p>動態內容編輯完成後, 以 generate_pages 轉為靜態內容, 以 git add commit 及 push 將內容推到遠端.</p>
-<p>4. 之後若要以 git clone 取下包含 submodule 的所有內容, 執行:</p>
-<p>git clone --recurse-submodules <a href="https://github.com/mdecourse/newcms.git">https://github.com/mdecourse/newcms.git</a></p>
-<br /> <a href='Rust.html'>Next</a> >> Rust</div>
+    <div id="tipue_search_content">online << <a href='online.html'>Previous</a> <a href='midterm.html'>Next</a> >> midterm<br /><h1>w13</h1>
+<!-- 導入 brython 程式庫 -->
+<script src="./../cmsimde/static/brython.js"></script>
+<script src="./../cmsimde/static/brython_stdlib.js"></script>
+<!-- 啟動 Brython -->
+<script>
+window.onload=function(){
+brython({debug:1, pythonpath:['./../cmsimde/static/','./../downloads/py/']});
+}
+</script>
+<div id="brython_div"></div>
+<script type="text/python">
+# from https://levelup.gitconnected.com/writing-tetris-in-python-2a16bddb5318
+# 暫時關閉 system proxy 設定後,  pip install pygame
+#import pygame
+import random
+# 以下為 Brython 新增
+from browser import document as doc
+from browser import html
+import browser.timer
+
+# 利用 html 建立一個 CANVAS 標註物件, 與變數 canvas 對應
+canvas = html.CANVAS(width = 400, height = 500, id="canvas")
+brython_div = doc["brython_div"]
+brython_div <= canvas
+ctx = canvas.getContext("2d")
+
+colors = [
+    (0, 0, 0),
+    (120, 37, 179),
+    (100, 179, 179),
+    (80, 34, 22),
+    (80, 134, 22),
+    (180, 34, 22),
+    (180, 34, 122),
+]
+
+
+class Figure:
+    x = 0
+    y = 0
+
+    figures = [
+        [[1, 5, 9, 13], [4, 5, 6, 7]],
+        [[4, 5, 9, 10], [2, 6, 5, 9]],
+        [[6, 7, 9, 10], [1, 5, 6, 10]],
+        [[1, 2, 5, 9], [0, 4, 5, 6], [1, 5, 9, 8], [4, 5, 6, 10]],
+        [[1, 2, 6, 10], [5, 6, 7, 9], [2, 6, 10, 11], [3, 5, 6, 7]],
+        [[1, 4, 5, 6], [1, 4, 5, 9], [4, 5, 6, 9], [1, 5, 6, 9]],
+        [[1, 2, 5, 6]],
+    ]
+
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.type = random.randint(0, len(self.figures) - 1)
+        self.color = random.randint(1, len(colors) - 1)
+        self.rotation = 0
+
+    def image(self):
+        return self.figures[self.type][self.rotation]
+
+    def rotate(self):
+        self.rotation = (self.rotation + 1) % len(self.figures[self.type])
+
+
+class Tetris:
+    level = 2
+    score = 0
+    state = "start"
+    field = []
+    height = 0
+    width = 0
+    x = 100
+    y = 60
+    zoom = 20
+    figure = None
+
+    def __init__(self, height, width):
+        self.height = height
+        self.width = width
+        self.field = []
+        self.score = 0
+        self.state = "start"
+        for i in range(height):
+            new_line = []
+            for j in range(width):
+                # 起始時每一個都填入 0
+                new_line.append(0)
+            self.field.append(new_line)
+
+    def new_figure(self):
+        self.figure = Figure(3, 0)
+
+    def intersects(self):
+        intersection = False
+        for i in range(4):
+            for j in range(4):
+                if i * 4 + j in self.figure.image():
+                    # block 到達底部, 左右兩邊界, 或該座標有其他 block
+                    if i + self.figure.y > self.height - 1 or \
+                            j + self.figure.x > self.width - 1 or \
+                            j + self.figure.x < 0 or \
+                            self.field[i + self.figure.y][j + self.figure.x] > 0:
+                        intersection = True
+        return intersection
+
+    def break_lines(self):
+        lines = 0
+        for i in range(1, self.height):
+            zeros = 0
+            for j in range(self.width):
+                if self.field[i][j] == 0:
+                    zeros += 1
+            if zeros == 0:
+                lines += 1
+                for i1 in range(i, 1, -1):
+                    for j in range(self.width):
+                        self.field[i1][j] = self.field[i1 - 1][j]
+        self.score += lines ** 2
+
+    def go_space(self):
+        while not self.intersects():
+            self.figure.y += 1
+        self.figure.y -= 1
+        self.freeze()
+
+    def go_down(self):
+        self.figure.y += 1
+        if self.intersects():
+            self.figure.y -= 1
+            self.freeze()
+
+    def freeze(self):
+        for i in range(4):
+            for j in range(4):
+                if i * 4 + j in self.figure.image():
+                    self.field[i + self.figure.y][j + self.figure.x] = self.figure.color
+        self.break_lines()
+        self.new_figure()
+        if self.intersects():
+            self.state = "gameover"
+
+    def go_side(self, dx):
+        old_x = self.figure.x
+        self.figure.x += dx
+        if self.intersects():
+            self.figure.x = old_x
+
+    def rotate(self):
+        old_rotation = self.figure.rotation
+        self.figure.rotate()
+        if self.intersects():
+            self.figure.rotation = old_rotation
+
+# Define some colors
+# from https://stackoverflow.com/questions/3380726/converting-a-rgb-color-tuple-to-a-six-digit-code
+BLACK = '#%02x%02x%02x' % (0, 0, 0)
+WHITE = '#%02x%02x%02x' % (255, 255, 255)
+GRAY = '#%02x%02x%02x' % (128, 128, 128)
+
+done = False
+fps = 25
+game = Tetris(20, 10)
+counter = 0
+
+pressing_down = False
+
+def key_down(eve):
+    key = eve.keyCode
+    #if event.type == pygame.QUIT:
+    # 32 is pause
+    if key == 32:
+        done = True
+    # 82 is r key to rotate
+    if key == 82:
+        game.rotate()
+    # 40 is down key
+    if key == 40:
+        pressing_down = True
+    # 37 is left key
+    if key == 37:
+        game.go_side(-1)
+    # 39 is right key
+    if key == 39:
+        game.go_side(1)
+    # 68 is d key to move block to bottom
+    if key == 68:
+        game.go_space()
+    # 27 is escape
+    # reset the game
+    if key == 27:
+        game.__init__(20, 10)
+
+def key_up(eve):
+    key = eve.keyCode
+    # 40 is down key
+    if key == 40:
+        pressing_down = False
+
+#while not done:
+def do_game():
+    global counter
+    if game.figure is None:
+        game.new_figure()
+    counter += 1
+    if counter > 100000:
+        counter = 0
+    if counter % (fps // game.level // 2) == 0 or pressing_down:
+        if game.state == "start":
+            game.go_down()
+    
+    for i in range(game.height):
+        for j in range(game.width):
+            ctx.fillStyle = WHITE
+            #ctx.scale(game.zoom, game.zoom)
+            ctx.fillRect(game.x + game.zoom * j, game.y + game.zoom * i, game.zoom, game.zoom)
+            if game.field[i][j] > 0:
+                ctx.fillStyle = '#%02x%02x%02x' % colors[game.field[i][j]]
+                ctx.fillRect(game.x + game.zoom * j + 1, game.y + game.zoom * i + 1, game.zoom - 2, game.zoom - 1)
+            ctx.lineWidth = 1
+            ctx.strokeStyle = GRAY
+            ctx.beginPath()
+            ctx.rect(game.x + game.zoom * j, game.y + game.zoom * i, game.zoom, game.zoom)
+            ctx.stroke()
+    if game.figure is not None:
+        for i in range(4):
+            for j in range(4):
+                p = i * 4 + j
+                if p in game.figure.image():
+                    ctx.fillStyle = '#%02x%02x%02x' % colors[game.figure.color]
+                    ctx.fillRect(game.x + game.zoom * (j + game.figure.x) + 1,
+                                      game.y + game.zoom * (i + game.figure.y) + 1,
+                                      game.zoom - 2, game.zoom - 2)
+
+doc.addEventListener("keydown", key_down)
+doc.addEventListener("keyup", key_up)
+browser.timer.set_interval(do_game, fps)
+</script><br />online << <a href='online.html'>Previous</a> <a href='midterm.html'>Next</a> >> midterm</div>
         
     <!-- footer -->
       <div class="container">
