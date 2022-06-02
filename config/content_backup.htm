@@ -487,9 +487,9 @@ def clear_bd(ev):
     bd.clear()
 # Brython 3.3.4 內建的 container 名稱為  'container' 且 turtle 輸出為 svg 必須使用 div 訂定 id
 Ace = ace.Editor(editor_id="kw_editor", console_id="kw_console", container_id="kw__container", storage_id="kw_py_src" )
-Tetrisurl= "https://gist.githubusercontent.com/41023146/f73e9ce12a432f34aa373a1a1a05d85b/raw/dc41a8d5065a12779e4c89f28827bc40a8e121d5/Python"
+Tetrisurl= "https://gist.githubusercontent.com/41023146/f73e9ce12a432f34aa373a1a1a05d85b/raw/5446f30760b31c8e5bb97b3d8b7c4c71a1b52fb7/Python"
 Tetris = open(Tetrisurl).read()
-Ace.editor.setValue(onlinew14)
+Ace.editor.setValue(Tetris)
 Ace.editor.scrollToRow(0)
 Ace.editor.gotoLine(0)
 # 執行程式, 顯示輸出結果與清除輸出結果及對應按鈕綁定
