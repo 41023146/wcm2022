@@ -139,46 +139,88 @@ img.add_border {
           </div>
           
         </header>
-    <div id="tipue_search_content">Tetris << <a href='Tetris.html'>Previous</a> <a href='run.html'>Next</a> >> run<br /><h1>progress rate</h1>
-<p><strong>week1</strong></p>
-<p>1.<span>電腦輔助設計室IPv6 網路設定。</span></p>
-<p><span>2.創建wcm2022倉儲。</span></p>
-<p><strong>week2</strong></p>
-<p>1.添加Rust頁面。</p>
-<p><strong>week3</strong></p>
-<p>1.學習建立可攜系統。</p>
-<p><strong>week4</strong></p>
-<p>1.討論同學倉儲為什麼無法添加cmsimde。</p>
-<p><strong>week5</strong></p>
-<p>1.無</p>
-<p><strong>week6</strong></p>
-<p>1.無</p>
-<p><strong>week7</strong></p>
-<p>1.學習如何設定nginx。</p>
-<p>2.用gpg4win查看下載的檔案的數位簽證。</p>
-<p><strong>week8</strong></p>
-<p>1.添加midterm頁面，並加入期中考的兩個題目和答案。</p>
-<p><strong>week9</strong></p>
-<p>1.期中考週。</p>
-<p>2.期中考改為在wink影片添加註解並將影片放到個人網站。</p>
-<p><strong>week10</strong></p>
-<p>1.加入電腦輔助設計室個人虛擬主機 IP 設定。</p>
-<p><strong>week11</strong></p>
-<p>1.加入 w11_1a 網路對接與 RJ45 網路線相關資料。</p>
-<p><strong>week12</strong></p>
-<p>1.建立虛擬主機。</p>
-<p>2.在電腦輔助設計室設定伺服器</p>
-<p><strong>week13</strong></p>
-<p>1.建立Bython環境，並加入Tetris 遊戲。</p>
-<p>2.Tetris 線上遊戲專案報告。</p>
-<p><strong>week14</strong></p>
-<p>1.資料對比並將退選的同學資料刪除。</p>
-<p><strong>week15</strong></p>
-<p>1.放假。</p>
-<p>2.將<span>Tetris 遊戲加入計分系統。</span></p>
-<p>3.Tetris 遊戲計分系統報告。</p>
-<p><strong>week16</strong></p>
-<p>1.期末報告整理。</p><br />Tetris << <a href='Tetris.html'>Previous</a> <a href='run.html'>Next</a> >> run</div>
+    <div id="tipue_search_content">w17 << <a href='w17.html'>Previous</a> <a href='online.html'>Next</a> >> online<br /><h1>w18</h1>
+<script src="./../cmsimde/static/brython.js"></script>
+<script src="./../cmsimde/static/brython_stdlib.js"></script>
+<!-- for ggame -->
+<p>
+<script src="./../cmsimde/static/jquery-3.3.1.min.js"></script>
+<script src="./../cmsimde/static/jquery-ui.1.12.1.min.js"></script>
+<script src="./../cmsimde/static/pixi-3.0.5.min.js"></script>
+<script src="./../cmsimde/static/buzz-1.2.1.js"></script>
+<script src="./../cmsimde/static/bs.js"></script>
+<script src="./../downloads/brython_modules.js"></script>
+</p>
+<!-- Cango 程式庫 -->
+<p>
+<script src="./../cmsimde/static/Cango-24v03-min.js"></script>
+<script src="./../cmsimde/static/CangoAxes-6v01-min.js"></script>
+<script src="./../cmsimde/static/gearUtils-09.js"></script>
+<script src="./../cmsimde/static/SVGpathUtils-6v03-min.js"></script>
+</p>
+<!-- for Konva 程式庫 -->
+<p>
+<script src="./../cmsimde/static/konva.min.js"></script>
+<script>
+window.onload=function(){
+brython({debug:1, pythonpath:['./../cmsimde/static/','./../downloads/py/']});
+}
+</script>
+</p>
+<p><!-- 導入 FileSaver 與 filereader --></p>
+<p>
+<script src="./../cmsimde/static/ace/FileSaver.min.js" type="text/javascript"></script>
+<script src="./../cmsimde/static/ace/filereader.js" type="text/javascript"></script>
+</p>
+<p><!-- 導入 ace --></p>
+<p>
+<script src="./../cmsimde/static/ace/ace.js" type="text/javascript"></script>
+<script src="./../cmsimde/static/ace/ext-language_tools.js" type="text/javascript"></script>
+<script src="./../cmsimde/static/ace/mode-python3.js" type="text/javascript"></script>
+<script src="./../cmsimde/static/ace/snippets/python.js" type="text/javascript"></script>
+</p>
+<p><!-- 請注意, 這裡使用 Javascript 將 localStorage["py_src"] 中存在近端瀏覽器的程式碼, 由使用者決定存檔名稱--></p>
+<p>
+<script type="text/javascript">
+function doSave(storage_id, filename){
+    var blob = new Blob([localStorage[storage_id]], {type: "text/plain;charset=utf-8"});
+    filename = document.getElementById(filename).value
+    saveAs(blob, filename+".py");
+}
+</script>
+</p>
+<p><!-- 印出版次與關鍵字程式 --></p>
+<p>
+<script type="text/python3">
+from browser import document as doc
+from browser import html
+import ace
+# 清除畫布
+def clear_bd(ev):
+    bd = doc["brython_div"]
+    bd.clear()
+# Brython 3.3.4 內建的 container 名稱為  'container' 且 turtle 輸出為 svg 必須使用 div 訂定 id
+Ace = ace.Editor(editor_id="kw_editor", console_id="kw_console", container_id="kw__container", storage_id="kw_py_src" )
+Tetrisurl= "https://gist.githubusercontent.com/41023146/7b66491a4db2d0774555cf9d37b1c4cf/raw/b72174bf26ad43ef921f14545caf9e602e225091/Python"
+Tetris = open(Tetrisurl).read()
+Ace.editor.setValue(Tetris)
+Ace.editor.scrollToRow(0)
+Ace.editor.gotoLine(0)
+# 執行程式, 顯示輸出結果與清除輸出結果及對應按鈕綁定
+doc['kw_run'].bind('click', Ace.run)
+doc['kw_show_console'].bind('click', Ace.show_console)
+doc['kw_clear_console'].bind('click', Ace.clear_console)
+doc['clear_bd'].bind('click', clear_bd)
+</script>
+</p>
+<p><!-- 用來顯示程式碼的 editor 區域 --></p>
+<div id="kw_editor" style="width: 600px; height: 300px;"></div>
+<p><!-- 以下的表單與按鈕與前面的 Javascript doSave 函式以及 FileSaver.min.js 互相配合 --></p>
+<form><label>Filename: <input id="kw_filename" placeholder="input file name" type="text"/>.py</label> <input onclick="doSave('kw_py_src', 'kw_filename');" type="submit" value="Save"/></form>
+<p><button id="kw_run">Run</button> <button id="kw_show_console">Output</button> <button id="kw_clear_console">清除輸出區</button><button id="clear_bd">清除繪圖區</button><button onclick="window.location.reload()">Reload</button></p>
+<div style="width: 100%; height: 100%;"><textarea autocomplete="off" id="kw_console"></textarea></div>
+<div id="brython_div"></div>
+<div class="col-md-0" height="1" id="graphics-column" width="1"></div><br />w17 << <a href='w17.html'>Previous</a> <a href='online.html'>Next</a> >> online</div>
         
     <!-- footer -->
       <div class="container">
